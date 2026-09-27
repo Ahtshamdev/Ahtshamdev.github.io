@@ -10,7 +10,7 @@ export const profile = {
   available: 'Open to senior mobile roles from November 2026',
   headline: 'I build mobile apps that keep working when the network doesn’t.',
   intro:
-    'Seven years shipping iOS and Android apps with React Native, Swift and Kotlin, plus the Node and Postgres services behind them. Most of my work is for people using an app at a job site, on a delivery route or at a pharmacy counter, where a spinner is not an option.',
+    'Seven years shipping iOS and Android apps with React Native, Swift and Kotlin, plus the web consoles, storefronts and Node services around them. Most of my work is for people using an app at a job site, on a delivery route or at a pharmacy counter, where a spinner is not an option.',
 };
 
 export type Metric = { value: string; label: string };
@@ -18,6 +18,9 @@ export type Decision = { title: string; body: string };
 
 export type Project = {
   slug: string;
+  kind: 'app' | 'web';
+  /** Web projects: the address shown in the browser frame. */
+  domain?: string;
   name: string;
   tagline: string;
   summary: string;
@@ -38,6 +41,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: 'tidewell',
+    kind: 'app',
     name: 'Tidewell',
     tagline: 'Offline-first inspections for water utilities',
     summary:
@@ -89,6 +93,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'kilo',
+    kind: 'app',
     name: 'Kilo Courier',
     tagline: 'Live routing for a same-day grocery fleet',
     summary:
@@ -134,6 +139,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'dose',
+    kind: 'app',
     name: 'Dose',
     tagline: 'Medication reminders designed for older eyes',
     summary:
@@ -179,6 +185,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'ledger',
+    kind: 'app',
     name: 'Ledger',
     tagline: 'Shared budgets for households',
     summary:
@@ -218,6 +225,105 @@ export const projects: Project[] = [
       'I would add a web view of the ledger earlier. Many users asked for one to check balances from a laptop.',
   },
 ];
+
+export const sites: Project[] = [
+  {
+    slug: 'dispatch',
+    kind: 'web',
+    domain: 'dispatch.kilo.app',
+    name: 'Kilo Dispatch',
+    tagline: 'A live control room for 900 couriers',
+    summary:
+      'The web console dispatchers use to watch every courier, reassign orders and spot late deliveries before customers do. It renders the whole fleet live on one map without dropping frames.',
+    year: '2024',
+    role: 'Frontend lead',
+    team: '2 frontend, 3 backend, 1 designer',
+    platforms: 'Web, desktop browsers',
+    stack: ['Next.js', 'React', 'TypeScript', 'MapLibre GL', 'WebSockets', 'TanStack Query', 'Playwright'],
+    color: '#E0482B',
+    metrics: [
+      { value: '900', label: 'couriers tracked live' },
+      { value: '60fps', label: 'map with the full fleet on screen' },
+      { value: '−31%', label: 'late orders in the first quarter' },
+    ],
+    problem: [
+      'Dispatchers juggled three tools: a map that refreshed every 30 seconds, a spreadsheet of orders and a group chat with drivers. Late orders were noticed when a customer phoned in.',
+    ],
+    constraints: [
+      'Up to 900 moving markers and 4,000 open orders on screen at once.',
+      'Dispatchers keep the console open for a 10-hour shift, so memory must stay flat.',
+      'It must share the same real-time channel as the courier app.',
+    ],
+    decisions: [
+      {
+        title: 'Markers drawn by the GPU, not the DOM',
+        body: 'Couriers render as a single MapLibre symbol layer fed from a typed array and updated in place. Moving off DOM markers took a full-fleet frame from 48 ms to under 6 ms.',
+      },
+      {
+        title: 'One socket, shared with the app backend',
+        body: 'The console subscribes to the same Redis-backed channels as the courier app, with sequence numbers for replay, so the map and the drivers never disagree.',
+      },
+      {
+        title: 'Lateness is predicted, not reported',
+        body: 'Each order carries an ETA that updates with the courier’s position. Orders at risk rise to the top of the queue ten minutes before they are late.',
+      },
+    ],
+    outcome: [
+      'Late orders fell 31% in the first quarter, and dispatchers retired the spreadsheet and the group chat in the second week.',
+    ],
+    retro:
+      'Keyboard shortcuts came late. Dispatchers live in this screen all day and should have been able to reassign an order without touching the mouse from the start.',
+  },
+  {
+    slug: 'loom',
+    kind: 'web',
+    domain: 'loomandfield.com',
+    name: 'Loom & Field',
+    tagline: 'A storefront that loads before you blink',
+    summary:
+      'A headless storefront for a handmade textiles brand selling across Pakistan and the Gulf. I rebuilt it from a slow theme into a Next.js site that feels instant on a mid-range phone on 4G.',
+    year: '2022',
+    role: 'Full-stack developer',
+    team: '1 developer, 1 designer, brand team',
+    platforms: 'Web, mobile first',
+    stack: ['Next.js', 'React', 'TypeScript', 'Shopify Storefront API', 'Vercel', 'Sanity'],
+    color: '#9A5B2E',
+    metrics: [
+      { value: '1.2s', label: 'largest paint on 4G, was 4.1s' },
+      { value: '+23%', label: 'mobile conversion rate' },
+      { value: '99', label: 'Lighthouse performance score' },
+    ],
+    problem: [
+      'The old theme shipped 2 MB of JavaScript before showing a product. Most visitors arrived from Instagram on a phone, and more than half left before the first image appeared.',
+    ],
+    constraints: [
+      'Keep Shopify for checkout, inventory and payments.',
+      'The brand team edits collections weekly and cannot wait on a developer.',
+    ],
+    decisions: [
+      {
+        title: 'Static pages, fresh stock',
+        body: 'Product pages are pre-rendered and revalidated when Shopify sends a webhook, so they load from the edge but never show a sold-out rug as available.',
+      },
+      {
+        title: 'Images sized for the phone in hand',
+        body: 'Every image is served as AVIF at the exact width the layout needs, with a blurred placeholder baked in at build time. The largest paint dropped from 4.1 to 1.2 seconds.',
+      },
+      {
+        title: 'Content the brand team owns',
+        body: 'Lookbooks and collection pages are edited in Sanity with live previews, and publishing rebuilds only the pages that changed.',
+      },
+    ],
+    outcome: [
+      'Mobile conversion rose 23% in the first two months, and the brand team now launches collections on their own.',
+    ],
+    retro:
+      'I would set up real-user Core Web Vitals tracking before the rebuild, not after. We had lab numbers for the old site but no field data to compare against.',
+  },
+];
+
+/** Apps and websites in display order, used for case study pages. */
+export const allWork: Project[] = [...projects, ...sites];
 
 export type Role = {
   period: string;
@@ -270,7 +376,13 @@ export const capabilities = [
 
 export const education = 'BS Computer Science, University of the Punjab, 2019';
 
-export type Architecture = { device: string[]; link: string; server: string[] };
+export type Architecture = {
+  device: string[];
+  link: string;
+  server: string[];
+  deviceTitle?: string;
+  serverTitle?: string;
+};
 
 export const architecture: Record<string, Architecture> = {
   tidewell: {
@@ -292,5 +404,17 @@ export const architecture: Record<string, Architecture> = {
     device: ['Compose UI', 'Room database', 'WorkManager sync worker'],
     link: 'REST over HTTPS',
     server: ['Ktor API', 'PostgreSQL', 'Push notifications via FCM'],
+  },
+  dispatch: {
+    deviceTitle: 'In the browser',
+    device: ['Next.js console', 'MapLibre GL symbol layer', 'Order queue with live ETAs'],
+    link: 'Shared WebSocket channel',
+    server: ['WebSocket gateway', 'Redis pub/sub', 'ETA service', 'PostgreSQL'],
+  },
+  loom: {
+    deviceTitle: 'At the edge',
+    device: ['Pre-rendered Next.js pages', 'AVIF images with placeholders', 'Cart as a server action'],
+    link: 'Webhooks revalidate pages',
+    server: ['Shopify Storefront API', 'Sanity content studio', 'Shopify checkout'],
   },
 };

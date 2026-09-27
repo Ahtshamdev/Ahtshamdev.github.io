@@ -55,17 +55,17 @@ const { name, interactive = false } = Astro.props;
         <p class="tw-kicker">Route 14</p>
         <p class="tw-title">Today’s assets</p>
       </div>
-      <span class="tw-sync"><span class="dot" />Offline, 12 queued</span>
+      <span class="tw-sync"><span class="q"><span class="dot" />Offline, 12 queued</span><span class="s"><span class="dot" />All synced</span></span>
     </header>
     <div class="tw-map" aria-hidden="true">
       <svg viewBox="0 0 280 150" preserveAspectRatio="none">
         <path d="M0 40 H280 M0 95 H280 M60 0 V150 M150 0 V150 M225 0 V150" stroke="#cfe4e5" stroke-width="7" />
         <path d="M0 125 C60 120 90 70 150 70 S230 30 280 20" stroke="#bcd9db" stroke-width="12" fill="none" />
-        <path d="M30 128 L60 95 L150 95 L150 40 L225 40" stroke="#0e7c86" stroke-width="3.5" fill="none" stroke-dasharray="1 0" stroke-linejoin="round" />
-        <circle cx="60" cy="95" r="7" fill="#0e7c86" stroke="#fff" stroke-width="3" />
-        <circle cx="150" cy="95" r="7" fill="#0e7c86" stroke="#fff" stroke-width="3" />
-        <circle cx="150" cy="40" r="9" fill="#f5a524" stroke="#fff" stroke-width="3" />
-        <circle cx="225" cy="40" r="7" fill="#fff" stroke="#0e7c86" stroke-width="3" />
+        <path d="M30 128 L60 95 L150 95 L150 40 L225 40" stroke="#0e7c86" stroke-width="3.5" fill="none" stroke-linejoin="round" class="tw-route" pathLength="1" />
+        <circle class="tw-pin" cx="60" cy="95" r="7" fill="#0e7c86" stroke="#fff" stroke-width="3" />
+        <circle class="tw-pin" cx="150" cy="95" r="7" fill="#0e7c86" stroke="#fff" stroke-width="3" />
+        <circle class="tw-pin now" cx="150" cy="40" r="9" fill="#f5a524" stroke="#fff" stroke-width="3" />
+        <circle class="tw-pin" cx="225" cy="40" r="7" fill="#fff" stroke="#0e7c86" stroke-width="3" />
         <circle cx="30" cy="128" r="5" fill="#1c1f24" />
       </svg>
     </div>
@@ -87,9 +87,8 @@ const { name, interactive = false } = Astro.props;
         <rect width="280" height="330" fill="#22252b" />
         <path d="M-10 60 L300 110 M-10 200 L300 170 M70 -10 L40 340 M190 -10 L230 340 M-10 290 L300 260" stroke="#30343b" stroke-width="14" />
         <path d="M0 250 Q80 230 120 180 T210 90 L260 40" stroke="#3a3f47" stroke-width="22" fill="none" />
-        <path d="M52 262 L118 190 L178 176 L208 96" stroke="#e0482b" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-        <circle cx="52" cy="262" r="9" fill="#fff" />
-        <circle cx="52" cy="262" r="4" fill="#e0482b" />
+        <path class="kl-route" pathLength="1" d="M52 262 L118 190 L178 176 L208 96" stroke="#e0482b" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        <g class="kl-driver"><circle r="9" fill="#fff" /><circle r="4" fill="#e0482b" /></g>
         <circle cx="208" cy="96" r="11" fill="#e0482b" stroke="#fff" stroke-width="3" />
       </svg>
       <span class="kl-shift"><span class="dot" />On shift, 3h 12m</span>
@@ -109,7 +108,7 @@ const { name, interactive = false } = Astro.props;
       </ol>
       <div class="kl-accept">
         <span>Accept order</span>
-        <span class="ring num" style="--p: 72%">18</span>
+        <span class="ring num" />
       </div>
     </div>
   </div>
@@ -124,7 +123,7 @@ const { name, interactive = false } = Astro.props;
       <div class="ds-pill" aria-hidden="true"><AppGlyph slug="dose" size={34} /></div>
       <p class="ds-name">Metformin</p>
       <p class="ds-detail">500 mg, 1 tablet<br />with breakfast</p>
-      <div class="ds-taken">Mark as taken</div>
+      <div class="ds-taken"><span class="a">Mark as taken</span><span class="b">Taken at 10:02</span></div>
       <div class="ds-snooze">Remind me in 15 minutes</div>
     </div>
     <p class="ds-later-title">Later today</p>

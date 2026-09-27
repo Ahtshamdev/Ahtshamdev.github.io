@@ -1,0 +1,144 @@
+---
+// Hand-built mock websites shown inside <Browser>. Designed on a 1100px canvas.
+import './web.css';
+
+interface Props {
+  name: 'dispatch' | 'loom';
+}
+const { name } = Astro.props;
+
+// Deterministic pseudo-random courier positions, so builds are stable.
+let seed = 7;
+const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+const couriers = Array.from({ length: 46 }, (_, i) => ({
+  x: Math.round(40 + rand() * 700),
+  y: Math.round(30 + rand() * 520),
+  late: i % 11 === 3,
+  drift: 1 + (i % 3),
+  dur: (6 + rand() * 6).toFixed(1),
+  delay: (-rand() * 8).toFixed(1),
+}));
+
+const orders = [
+  { id: '#48213', place: 'Model Town', eta: '4 min', state: 'risk', courier: 'Bilal R.' },
+  { id: '#48207', place: 'Johar Town', eta: '9 min', state: 'risk', courier: 'Usman K.' },
+  { id: '#48219', place: 'Gulberg III', eta: '12 min', state: 'ok', courier: 'Hira S.' },
+  { id: '#48222', place: 'DHA Phase 5', eta: '16 min', state: 'ok', courier: 'Ali M.' },
+  { id: '#48225', place: 'Garden Town', eta: '18 min', state: 'ok', courier: 'Sara T.' },
+  { id: '#48226', place: 'Cantt', eta: '21 min', state: 'ok', courier: 'Fahad N.' },
+  { id: '#48230', place: 'Township', eta: '25 min', state: 'new', courier: 'Unassigned' },
+];
+
+const products = [
+  { name: 'Multan kilim, rust', price: 'Rs 38,500', a: '#b4552d', b: '#e8cfa6', c: '#2f3a57' },
+  { name: 'Indigo dhurrie', price: 'Rs 24,900', a: '#2f3a57', b: '#d9d2c1', c: '#8aa0b8' },
+  { name: 'Cholistan runner', price: 'Rs 19,500', a: '#6f7d4f', b: '#efe3c8', c: '#b4552d' },
+  { name: 'Sindhi ralli throw', price: 'Rs 12,800', a: '#8a2e2e', b: '#f1e4c9', c: '#1f2a24' },
+];
+---
+
+{name === 'dispatch' && (
+  <div class="web dp">
+    <header class="dp-top">
+      <span class="dp-logo"><span class="dp-mark" />Kilo Dispatch</span>
+      <span class="dp-city">Lahore, lunch shift</span>
+      <div class="dp-kpis">
+        <span><b class="num">612</b> on shift</span>
+        <span><b class="num">412</b> open orders</span>
+        <span class="warn"><b class="num">9</b> at risk</span>
+        <span><b class="num">31 min</b> average ETA</span>
+      </div>
+      <span class="dp-live"><span class="dot" />Live</span>
+    </header>
+    <div class="dp-body">
+      <aside class="dp-queue">
+        <div class="dp-tabs"><span class="on">At risk first</span><span>Newest</span><span>By zone</span></div>
+        <ul role="list">
+          {orders.map((o, i) => (
+            <li class:list={['dp-order', o.state, i === 0 && 'pick']}>
+              <div class="dp-o-top">
+                <span class="dp-id num">{o.id}</span>
+                <span class="dp-eta num">{o.eta}</span>
+              </div>
+              <p class="dp-place">{o.place}</p>
+              <p class="dp-courier">{o.courier}</p>
+              {o.state === 'risk' && <span class="dp-flag">Likely late</span>}
+            </li>
+          ))}
+        </ul>
+      </aside>
+      <div class="dp-map">
+        <svg class="dp-streets" viewBox="0 0 780 620" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 120 L780 90 M0 260 L780 300 M0 430 L780 400 M0 560 L780 540 M120 0 L90 620 M300 0 L330 620 M480 0 L450 620 M640 0 L680 620" stroke="#2b3038" stroke-width="10" />
+          <path d="M-20 520 C160 470 240 330 390 300 S620 140 800 60" stroke="#343a44" stroke-width="26" fill="none" />
+          <path d="M40 40 C200 140 260 240 250 380 S380 600 520 640" stroke="#2f343d" stroke-width="18" fill="none" />
+          <path class="dp-route" d="M168 470 L250 380 L390 300 L452 212" stroke="#e0482b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {couriers.map((c) => (
+          <span
+            class:list={['dp-c', c.late && 'late', `d${c.drift}`]}
+            style={`left:${c.x}px;top:${c.y}px;animation-duration:${c.dur}s;animation-delay:${c.delay}s`}
+          />
+        ))}
+        <span class="dp-pin" style="left:452px;top:212px" />
+        <div class="dp-card" style="left:180px;top:392px">
+          <p class="dp-card-name">Bilal R.<span class="num">, 1.4 km away</span></p>
+          <p class="dp-card-sub">Order #48213 to Model Town</p>
+          <div class="dp-card-bar"><span /></div>
+          <div class="dp-card-actions"><span class="primary">Reassign</span><span>Call</span></div>
+        </div>
+        <div class="dp-legend">
+          <span><i class="ok" />On time</span>
+          <span><i class="late" />Running late</span>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{name === 'loom' && (
+  <div class="web lf">
+    <div class="lf-note">Free delivery across Pakistan on orders over Rs 15,000</div>
+    <header class="lf-nav">
+      <nav><span>Rugs</span><span>Runners</span><span>Throws</span><span>Journal</span></nav>
+      <span class="lf-logo">Loom &amp; Field</span>
+      <nav class="right"><span>Search</span><span>Account</span><span>Bag (2)</span></nav>
+    </header>
+    <section class="lf-hero">
+      <div class="lf-hero-copy">
+        <p class="lf-kick">Autumn collection</p>
+        <h4>Handwoven in Multan. Made to be walked on.</h4>
+        <p class="lf-sub">Flat-weave rugs and throws made by twelve families of weavers, dyed with madder, indigo and pomegranate.</p>
+        <span class="lf-btn">Shop the collection</span>
+      </div>
+      <div class="lf-hero-art" aria-hidden="true">
+        <div class="lf-rug" />
+      </div>
+    </section>
+    <section class="lf-grid-wrap">
+      <div class="lf-row-head"><h5>New this week</h5><span>View all 48</span></div>
+      <div class="lf-grid">
+        {products.map((p) => (
+          <div class="lf-item">
+            <div class="lf-swatch" style={`--a:${p.a};--b:${p.b};--c:${p.c}`} />
+            <p class="lf-name">{p.name}</p>
+            <p class="lf-price num">{p.price}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+    <section class="lf-story">
+      <div class="lf-story-art" aria-hidden="true" />
+      <div>
+        <p class="lf-kick">From the journal</p>
+        <h5>Six weeks on one loom</h5>
+        <p class="lf-sub">How a single 8 by 10 kilim goes from raw wool in Cholistan to a finished rug, and why each one comes out a little different.</p>
+        <span class="lf-link">Read the story</span>
+      </div>
+    </section>
+    <footer class="lf-foot">
+      <span class="lf-logo">Loom &amp; Field</span>
+      <span>Care guide</span><span>Shipping</span><span>Returns</span><span>Contact</span>
+    </footer>
+  </div>
+)}

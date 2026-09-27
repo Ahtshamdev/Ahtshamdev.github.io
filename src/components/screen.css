@@ -694,3 +694,296 @@
   font-weight: 700;
   color: #6b4ee6;
 }
+
+/* ---------- Stateful pieces (static defaults) ---------- */
+.tw-sync {
+  display: inline-grid;
+}
+
+.tw-sync > span {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tw-sync .s {
+  opacity: 0;
+  color: #0b5d4a;
+}
+
+.tw-sync .s .dot {
+  background: #22a559;
+}
+
+.kl-driver {
+  transform: translate(52px, 262px);
+}
+
+@property --p {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 72%;
+}
+
+@property --n {
+  syntax: '<integer>';
+  inherits: false;
+  initial-value: 18;
+}
+
+.kl-accept .ring {
+  counter-reset: n var(--n);
+}
+
+.kl-accept .ring::after {
+  content: counter(n);
+}
+
+.ds-taken {
+  display: grid;
+  overflow: hidden;
+}
+
+.ds-taken > span {
+  grid-area: 1 / 1;
+}
+
+.ds-taken .b {
+  opacity: 0;
+}
+
+/* ---------- Motion: plays when the screen is live (opened on the stage, or scrolled into view) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  :is(.live) .scr {
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Home screen: icons settle in one after another */
+  .live .home .icon {
+    animation: pop 0.55s var(--spring) both;
+  }
+  .live .home li:nth-child(2) .icon { animation-delay: 0.06s; }
+  .live .home li:nth-child(3) .icon { animation-delay: 0.12s; }
+  .live .home li:nth-child(4) .icon { animation-delay: 0.18s; }
+  .live .home .w-bars span {
+    animation: grow 0.7s var(--ease-out) both;
+    transform-origin: bottom;
+  }
+  .live .home .w-bars span:nth-child(odd) { animation-delay: 0.08s; }
+
+  /* Tidewell: route draws, pins drop, queue syncs */
+  .live .tw-route {
+    stroke-dasharray: 1;
+    animation: draw 1.1s 0.25s var(--ease-out) both;
+  }
+  .live .tw-pin {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pop 0.45s var(--spring) both;
+  }
+  .live .tw-pin:nth-of-type(1) { animation-delay: 0.45s; }
+  .live .tw-pin:nth-of-type(2) { animation-delay: 0.7s; }
+  .live .tw-pin:nth-of-type(3) { animation-delay: 0.95s; }
+  .live .tw-pin:nth-of-type(4) { animation-delay: 1.2s; }
+  .live .tw-pin.now {
+    animation:
+      pop 0.45s 0.95s var(--spring) both,
+      beacon 1.8s 1.6s ease-out infinite;
+  }
+  .live .tw-sync {
+    animation: synced 0.4s 2.6s ease both;
+  }
+  .live .tw-sync .q {
+    animation: fade-out 0.3s 2.6s ease both;
+  }
+  .live .tw-sync .s {
+    animation: fade-in 0.3s 2.75s ease both;
+  }
+  .live .tw-list li {
+    animation: rise 0.5s var(--ease-out) both;
+  }
+  .live .tw-list li:nth-child(1) { animation-delay: 0.15s; }
+  .live .tw-list li:nth-child(2) { animation-delay: 0.22s; }
+  .live .tw-list li:nth-child(3) { animation-delay: 0.29s; }
+  .live .tw-list li:nth-child(4) { animation-delay: 0.36s; }
+
+  /* Kilo: route draws, driver sets off, order sheet slides up with a live countdown */
+  .live .kl-route {
+    stroke-dasharray: 1;
+    animation: draw 1.2s 0.2s var(--ease-out) both;
+  }
+  .live .kl-driver {
+    transform: none;
+    offset-path: path('M52 262 L118 190 L178 176 L208 96');
+    offset-rotate: 0deg;
+    animation: drive 9s 1.2s ease-in-out infinite alternate both;
+  }
+  .live .kl-sheet {
+    animation: sheet 0.6s 0.5s var(--spring) both;
+  }
+  .live .kl-accept .ring {
+    animation: countdown 25s 1.1s linear infinite both;
+  }
+
+  /* Dose: card lands, then the dose is logged */
+  .live .ds-card {
+    animation: rise 0.55s 0.1s var(--ease-out) both;
+  }
+  .live .ds-taken {
+    animation: taken 0.35s 2s ease both;
+  }
+  .live .ds-taken .a {
+    animation: slide-out 0.3s 2s ease both;
+  }
+  .live .ds-taken .b {
+    animation: slide-in 0.35s 2.1s var(--ease-out) both;
+  }
+  .live .ds-week .today {
+    animation: today 0.35s 2.2s ease both;
+  }
+  .live .ds-later li {
+    animation: rise 0.5s var(--ease-out) both;
+  }
+  .live .ds-later li:nth-child(1) { animation-delay: 0.3s; }
+  .live .ds-later li:nth-child(2) { animation-delay: 0.38s; }
+
+  /* Ledger: budget fills, balances arrive */
+  .live .lg-bar span {
+    animation: fill 1.1s 0.3s var(--ease-out) both;
+    transform-origin: left;
+  }
+  .live .lg-bal strong {
+    animation: rise 0.5s 0.1s var(--ease-out) both;
+  }
+  .live .lg-people li,
+  .live .lg-tx li {
+    animation: rise 0.45s var(--ease-out) both;
+  }
+  .live .lg-people li:nth-child(2) { animation-delay: 0.08s; }
+  .live .lg-tx li:nth-child(1) { animation-delay: 0.2s; }
+  .live .lg-tx li:nth-child(2) { animation-delay: 0.27s; }
+  .live .lg-tx li:nth-child(3) { animation-delay: 0.34s; }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@keyframes grow {
+  from {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes beacon {
+  0% {
+    stroke-width: 3;
+    stroke-opacity: 1;
+  }
+  100% {
+    stroke-width: 14;
+    stroke-opacity: 0;
+  }
+}
+
+@keyframes synced {
+  to {
+    background: #dff5e7;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes drive {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 62%;
+  }
+}
+
+@keyframes sheet {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes countdown {
+  from {
+    --p: 100%;
+    --n: 25;
+  }
+  to {
+    --p: 0%;
+    --n: 0;
+  }
+}
+
+@keyframes taken {
+  to {
+    background: #1f9d55;
+  }
+}
+
+@keyframes slide-out {
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes today {
+  to {
+    background: #6b4ee6;
+    color: #fff;
+  }
+}
+
+@keyframes fill {
+  from {
+    transform: scaleX(0);
+  }
+}

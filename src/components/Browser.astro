@@ -1,0 +1,133 @@
+---
+// Browser window frame. The page inside is designed at a fixed 1100px width and
+// scaled to fit, so mock sites keep their proportions at every screen size.
+interface Props {
+  domain: string;
+  label: string;
+  class?: string;
+  /** Lets the page inside scroll with the visitor's scroll position. */
+  scrolls?: boolean;
+}
+const { domain, label, class: className, scrolls = false } = Astro.props;
+---
+
+<figure class:list={['browser', className, scrolls && 'scrolls']} aria-label={label}>
+  <div class="chrome" aria-hidden="true">
+    <span class="nav-btns">
+      <svg viewBox="0 0 16 16" width="14" height="14"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <svg viewBox="0 0 16 16" width="14" height="14"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </span>
+    <span class="url">
+      <svg viewBox="0 0 16 16" width="11" height="11"><rect x="3.5" y="7" width="9" height="6.5" rx="1.5" fill="currentColor"></rect><path d="M5.5 7V5.5a2.5 2.5 0 0 1 5 0V7" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg>
+      {domain}
+    </span>
+    <span class="spacer"></span>
+  </div>
+  <div class="viewport">
+    <div class="canvas">
+      <slot />
+    </div>
+  </div>
+</figure>
+
+<script>
+  // Scale the 1100px design canvas to the frame's width.
+  const fit = (el: HTMLElement) => {
+    el.style.setProperty('--s', String(el.clientWidth / 1100));
+  };
+  const ro = new ResizeObserver((entries) => entries.forEach((e) => fit(e.target as HTMLElement)));
+  document.querySelectorAll<HTMLElement>('.browser .viewport').forEach((v) => {
+    fit(v);
+    ro.observe(v);
+  });
+</script>
+
+<style>
+  .browser {
+    --s: 1;
+    margin: 0;
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent),
+      0 50px 80px -40px color-mix(in srgb, #1c1f24 45%, transparent),
+      0 20px 40px -24px color-mix(in srgb, #1c1f24 30%, transparent);
+    view-timeline-name: --browser;
+  }
+
+  .chrome {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    height: 40px;
+    padding: 0 14px;
+    background: color-mix(in srgb, var(--surface) 70%, var(--paper));
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+  }
+
+  .nav-btns {
+    display: flex;
+    gap: 6px;
+    opacity: 0.7;
+  }
+
+  .url {
+    justify-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: min(60%, 320px);
+    justify-content: center;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: var(--paper);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .spacer {
+    width: 34px;
+  }
+
+  .viewport {
+    position: relative;
+    aspect-ratio: 1100 / 660;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1100px;
+    transform: scale(var(--s));
+    transform-origin: 0 0;
+  }
+
+  @media (max-width: 560px) {
+    .chrome {
+      height: 32px;
+      padding: 0 10px;
+    }
+    .url {
+      font-size: 11px;
+      padding: 3px 10px;
+    }
+    .nav-btns,
+    .spacer {
+      display: none;
+    }
+    .chrome {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,6 +1,15 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const pages = ['/', '/resume', '/work/tidewell', '/work/kilo', '/work/dose', '/work/ledger'];
+const pages = [
+  '/',
+  '/resume',
+  '/work/tidewell',
+  '/work/kilo',
+  '/work/dose',
+  '/work/ledger',
+  '/work/dispatch',
+  '/work/loom',
+];
 
 async function collectErrors(page: Page) {
   const errors: string[] = [];
@@ -65,4 +74,30 @@ test('page has the metadata recruiters’ link previews need', async ({ page }) 
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /og\.png$/);
   await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.{60,}/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+});
+
+test('with reduced motion, content is shown in its final state', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const word = page.locator('h1 .w > span').first();
+  await expect(word).toHaveCSS('transform', 'none');
+  await expect(page.locator('.intro')).toHaveCSS('opacity', '1');
+  // Metrics keep their real values instead of counting up.
+  await page.locator('#tidewell').scrollIntoViewIfNeeded();
+  await expect(page.locator('#tidewell [data-count]').first()).toHaveText('11,400');
+});
+
+test('metrics count up to their exact final values', async ({ page }) => {
+  await page.goto('/');
+  for (const [slug, value] of [['tidewell', '11,400'], ['kilo', '1.8s'], ['loom', '1.2s']]) {
+    const cells = page.locator(`#${slug} [data-count]`);
+    await cells.first().scrollIntoViewIfNeeded();
+    await expect(cells.filter({ hasText: value })).toHaveCount(1, { timeout: 4000 });
+  }
+});
+
+test('websites render inside browser frames with their domains', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#dispatch .browser')).toContainText('dispatch.kilo.app');
+  await expect(page.locator('#loom .browser')).toContainText('loomandfield.com');
 });

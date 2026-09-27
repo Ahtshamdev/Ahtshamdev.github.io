@@ -2,11 +2,15 @@
 import Base from '../layouts/Base.astro';
 import Phone from '../components/Phone.astro';
 import Screen from '../components/Screen.astro';
-import { profile, projects, experience, capabilities } from '../data/site';
+import Browser from '../components/Browser.astro';
+import WebScreen from '../components/WebScreen.astro';
+import { profile, projects, sites, experience, capabilities } from '../data/site';
 import { url } from '../lib/url';
 
 type ScreenName = 'home' | 'tidewell' | 'kilo' | 'dose' | 'ledger';
+type SiteName = 'dispatch' | 'loom';
 const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
+const words = profile.headline.split(' ');
 ---
 
 <Base>
@@ -14,30 +18,40 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
     <div class="flow">
       <section class="hero" data-screen="home" aria-labelledby="hero-title">
         <p class="avail"><span class="pulse" aria-hidden="true"></span>{profile.available}</p>
-        <h1 id="hero-title">{profile.headline}</h1>
+        <h1 id="hero-title" aria-label={profile.headline}>
+          {words.map((w, i) => (
+            <>
+              {i > 0 && ' '}
+              <span class="w" aria-hidden="true"><span style={`--i:${i}`}>{w}</span></span>
+            </>
+          ))}
+        </h1>
         <p class="intro">{profile.intro}</p>
         <div class="actions">
-          <a class="btn btn-solid" href="#work">See four apps I built</a>
+          <a class="btn btn-solid" href="#work">See the work</a>
           <a class="btn btn-ghost" href={`mailto:${profile.email}`}>Email me</a>
         </div>
         <dl class="facts">
           <div><dt>Based in</dt><dd>{profile.location}</dd></div>
           <div><dt>Works in</dt><dd>React Native, Swift, Kotlin, Node.js</dd></div>
         </dl>
-        <div class="inline-phone" aria-hidden="true">
+        <div class="inline-phone" aria-hidden="true" data-live>
           <Phone label="Home screen with four apps"><Screen name="home" /></Phone>
         </div>
       </section>
 
       <section id="work" class="work" aria-labelledby="work-title">
-        <h2 id="work-title" class="section-title">Selected work</h2>
+        <div class="section-head">
+          <h2 id="work-title" class="section-title">Apps</h2>
+          <p class="muted">Four apps in the hands of drivers, inspectors, patients and housemates.</p>
+        </div>
         {projects.map((p) => (
           <article id={p.slug} class="project" data-screen={p.slug} style={`--brand:${p.color}`} aria-labelledby={`${p.slug}-title`}>
-            <div class="inline-phone" aria-hidden="true">
+            <div class="inline-phone" aria-hidden="true" data-live style={`view-transition-name:device-${p.slug}`}>
               <Phone label={`${p.name} app`}><Screen name={p.slug as ScreenName} /></Phone>
             </div>
             <p class="p-year muted num">{p.year}</p>
-            <h3 id={`${p.slug}-title`}>
+            <h3 id={`${p.slug}-title`} style={`view-transition-name:title-${p.slug}`}>
               <a href={url(`work/${p.slug}`)}>{p.name}</a>
             </h3>
             <p class="p-tagline">{p.tagline}</p>
@@ -45,7 +59,7 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
             <dl class="metrics">
               {p.metrics.map((m) => (
                 <div>
-                  <dt>{m.value}</dt>
+                  <dt data-count>{m.value}</dt>
                   <dd>{m.label}</dd>
                 </div>
               ))}
@@ -62,7 +76,7 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
     <aside class="stage" aria-hidden="true">
       <div class="stage-inner">
         <Phone label="App preview">
-          <div class="layer on" data-layer="home"><Screen name="home" interactive /></div>
+          <div class="layer on live" data-layer="home"><Screen name="home" interactive /></div>
           {projects.map((p, i) => (
             <div class="layer app" data-layer={p.slug} style={`transform-origin:${origins[i]}`}>
               <Screen name={p.slug as ScreenName} />
@@ -73,6 +87,45 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
       </div>
     </aside>
   </div>
+
+  <section id="websites" class="websites" aria-labelledby="web-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="web-title" class="section-title">Websites</h2>
+        <p class="muted">The web side of the same products: a control room and a storefront.</p>
+      </div>
+      {sites.map((p) => (
+        <article id={p.slug} class="site" style={`--brand:${p.color}`} aria-labelledby={`${p.slug}-title`}>
+          <div class="site-frame" data-live style={`view-transition-name:device-${p.slug}`}>
+            <Browser domain={p.domain!} label={`${p.name} website`} scrolls={p.slug === 'loom'}>
+              <WebScreen name={p.slug as SiteName} />
+            </Browser>
+          </div>
+          <div class="site-text">
+            <div>
+              <p class="p-year muted num">{p.year}</p>
+              <h3 id={`${p.slug}-title`} style={`view-transition-name:title-${p.slug}`}>
+                <a href={url(`work/${p.slug}`)}>{p.name}</a>
+              </h3>
+              <p class="p-tagline">{p.tagline}</p>
+            </div>
+            <div>
+              <p class="p-summary">{p.summary}</p>
+              <dl class="metrics">
+                {p.metrics.map((m) => (
+                  <div>
+                    <dt data-count>{m.value}</dt>
+                    <dd>{m.label}</dd>
+                  </div>
+                ))}
+              </dl>
+              <a class="p-more link" href={url(`work/${p.slug}`)}>Read the {p.name} case study</a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
 
   <section id="experience" class="band" aria-labelledby="exp-title">
     <div class="wrap two">
@@ -124,6 +177,8 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
 </Base>
 
 <script>
+  import { watchLive, countUp, tilt } from '../scripts/motion';
+
   const stage = document.querySelector<HTMLElement>('.stage');
   const layers = [...document.querySelectorAll<HTMLElement>('[data-layer]')];
   const caption = document.querySelector<HTMLElement>('[data-caption]');
@@ -136,7 +191,11 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
   function show(name: string) {
     if (name === current) return;
     current = name;
-    layers.forEach((l) => l.classList.toggle('on', l.dataset.layer === name));
+    layers.forEach((l) => {
+      const on = l.dataset.layer === name;
+      l.classList.toggle('on', on);
+      l.classList.toggle('live', on);
+    });
     if (caption) caption.textContent = names[name] ?? '';
   }
 
@@ -159,7 +218,22 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
       { rootMargin: '-35% 0px -45% 0px', threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] },
     );
     sections.forEach((s) => io.observe(s));
+
+    const phone = stage.querySelector<HTMLElement>('.phone');
+    if (phone) {
+      tilt(stage, phone);
+      // Let the phone morph into the case study page's phone on navigation.
+      document.querySelectorAll<HTMLAnchorElement>('.project a[href*="/work/"]').forEach((a) => {
+        a.addEventListener('click', () => {
+          const slug = a.closest<HTMLElement>('.project')?.dataset.screen;
+          if (slug) phone.style.viewTransitionName = `device-${slug}`;
+        });
+      });
+    }
   }
+
+  watchLive();
+  countUp();
 </script>
 
 <style>
@@ -256,10 +330,6 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
     letter-spacing: -0.03em;
   }
 
-  .work > .section-title {
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--line);
-  }
 
   .project {
     padding-block: clamp(3rem, 8vh, 5rem);
@@ -563,6 +633,179 @@ const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
 
     .project .inline-phone {
       justify-content: center;
+    }
+  }
+  /* Headline words, revealed on load */
+  h1 .w {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+
+  h1 .w > span {
+    display: inline-block;
+  }
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+  }
+
+  .section-head p {
+    max-width: 30rem;
+  }
+
+  .work > .section-head {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Websites */
+  .websites {
+    border-top: 1px solid var(--line);
+    padding-block: clamp(4rem, 10vh, 7rem) 0;
+  }
+
+  .websites .section-head {
+    padding-bottom: clamp(2.5rem, 6vh, 4rem);
+  }
+
+  .site {
+    padding-bottom: clamp(4rem, 12vh, 8rem);
+  }
+
+  .site-frame {
+    max-width: 1100px;
+    margin-inline: auto;
+  }
+
+  .site-text {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 1.5rem clamp(2rem, 6vw, 6rem);
+    margin-top: clamp(2rem, 5vh, 3rem);
+  }
+
+  .site h3 {
+    font-size: var(--step-3);
+    letter-spacing: -0.04em;
+    margin-top: 0.4rem;
+  }
+
+  .site h3 a {
+    text-decoration: none;
+    background-image: linear-gradient(var(--brand), var(--brand));
+    background-size: 0% 3px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .site h3 a:hover {
+    background-size: 100% 3px;
+  }
+
+  .site .p-summary {
+    margin-top: 0;
+  }
+
+  .site .p-more {
+    display: inline-block;
+    margin-top: 1.75rem;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* One orchestrated entrance: headline words, then supporting copy, then the phone. */
+    h1 .w > span {
+      animation: word-up 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      animation-delay: calc(0.08s + var(--i) * 0.045s);
+    }
+
+    .avail,
+    .intro,
+    .hero .actions,
+    .facts {
+      animation: soft-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .avail {
+      animation-delay: 0.05s;
+    }
+    .intro {
+      animation-delay: 0.55s;
+    }
+    .hero .actions {
+      animation-delay: 0.65s;
+    }
+    .facts {
+      animation-delay: 0.75s;
+    }
+
+    .stage-inner {
+      animation: phone-in 1.1s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .stage :global(.phone) {
+      transition: transform 0.2s linear;
+      will-change: transform;
+    }
+
+    .stage-caption {
+      transition: opacity 0.2s;
+    }
+
+    /* Browser frames tip up into place as they scroll in. */
+    @supports (animation-timeline: view()) {
+      .site-frame {
+        animation: frame-in linear both;
+      }
+      /* Separate rule so the minifier can't fold the timeline into the shorthand. */
+      .site .site-frame {
+        animation-timeline: view();
+        animation-range: entry 0% cover 40%;
+      }
+    }
+  }
+
+  @keyframes word-up {
+    from {
+      transform: translateY(105%);
+    }
+  }
+
+  @keyframes soft-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  @keyframes phone-in {
+    from {
+      opacity: 0;
+      transform: translateY(60px) rotate(-4deg) scale(0.94);
+    }
+  }
+
+  @keyframes frame-in {
+    from {
+      opacity: 0.3;
+      transform: perspective(1600px) rotateX(14deg) scale(0.9);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .site-text {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

@@ -2,13 +2,15 @@
 import Base from '../../layouts/Base.astro';
 import Phone from '../../components/Phone.astro';
 import Screen from '../../components/Screen.astro';
-import { projects, architecture, type Project } from '../../data/site';
+import Browser from '../../components/Browser.astro';
+import WebScreen from '../../components/WebScreen.astro';
+import { allWork, architecture, type Project } from '../../data/site';
 import { url } from '../../lib/url';
 
 export function getStaticPaths() {
-  return projects.map((project, i) => ({
+  return allWork.map((project, i) => ({
     params: { slug: project.slug },
-    props: { project, next: projects[(i + 1) % projects.length] },
+    props: { project, next: allWork[(i + 1) % allWork.length] },
   }));
 }
 
@@ -20,14 +22,16 @@ interface Props {
 const { project: p, next } = Astro.props;
 const arch = architecture[p.slug];
 type ScreenName = 'tidewell' | 'kilo' | 'dose' | 'ledger';
+type SiteName = 'dispatch' | 'loom';
+const isWeb = p.kind === 'web';
 ---
 
 <Base title={`${p.name} case study`} description={p.summary}>
-  <article class="case" style={`--brand:${p.color}`}>
+  <article class:list={['case', isWeb && 'is-web']} style={`--brand:${p.color}`}>
     <header class="wrap head">
       <div class="head-text">
         <a class="back link muted" href={url('#work')}>All work</a>
-        <h1>{p.name}</h1>
+        <h1 style={`view-transition-name:title-${p.slug}`}>{p.name}</h1>
         <p class="tagline">{p.tagline}</p>
         <p class="summary">{p.summary}</p>
         <dl class="meta">
@@ -37,16 +41,24 @@ type ScreenName = 'tidewell' | 'kilo' | 'dose' | 'ledger';
           <div><dt>Platforms</dt><dd>{p.platforms}</dd></div>
         </dl>
       </div>
-      <div class="head-phone">
-        <Phone label={`${p.name} app screen`}><Screen name={p.slug as ScreenName} /></Phone>
-      </div>
+      {isWeb ? (
+        <div class="head-browser" data-live style={`view-transition-name:device-${p.slug}`}>
+          <Browser domain={p.domain!} label={`${p.name} website`}>
+            <WebScreen name={p.slug as SiteName} />
+          </Browser>
+        </div>
+      ) : (
+        <div class="head-phone live" style={`view-transition-name:device-${p.slug}`}>
+          <Phone label={`${p.name} app screen`}><Screen name={p.slug as ScreenName} /></Phone>
+        </div>
+      )}
     </header>
 
     <section class="wrap results" aria-label="Results">
       <dl class="metrics">
         {p.metrics.map((m) => (
           <div>
-            <dt>{m.value}</dt>
+            <dt data-count>{m.value}</dt>
             <dd>{m.label}</dd>
           </div>
         ))}
@@ -69,7 +81,7 @@ type ScreenName = 'tidewell' | 'kilo' | 'dose' | 'ledger';
           <h2>How it fits together</h2>
           <figure class="arch" aria-label={`Architecture of ${p.name}`}>
             <div class="lane">
-              <p class="lane-title">On the device</p>
+              <p class="lane-title">{arch.deviceTitle ?? 'On the device'}</p>
               <ul role="list">{arch.device.map((n) => <li>{n}</li>)}</ul>
             </div>
             <div class="wire">
@@ -77,7 +89,7 @@ type ScreenName = 'tidewell' | 'kilo' | 'dose' | 'ledger';
               <span class="wire-label">{arch.link}</span>
             </div>
             <div class="lane">
-              <p class="lane-title">In the cloud</p>
+              <p class="lane-title">{arch.serverTitle ?? 'In the cloud'}</p>
               <ul role="list">{arch.server.map((n) => <li>{n}</li>)}</ul>
             </div>
           </figure>
@@ -123,6 +135,12 @@ type ScreenName = 'tidewell' | 'kilo' | 'dose' | 'ledger';
     </nav>
   </article>
 </Base>
+
+<script>
+  import { watchLive, countUp } from '../../scripts/motion';
+  watchLive();
+  countUp();
+</script>
 
 <style>
   .head {
@@ -393,6 +411,39 @@ type ScreenName = 'tidewell' | 'kilo' | 'dose' | 'ledger';
 
   .next a:hover .next-name {
     color: var(--next);
+  }
+
+  .is-web .head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .is-web .head-text {
+    max-width: 52rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .head-text > :not(h1) {
+      animation: soft-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    .head-text > :nth-child(2) {
+      animation-delay: 0.04s;
+    }
+    .head-text > :nth-child(3) {
+      animation-delay: 0.12s;
+    }
+    .head-text > :nth-child(4) {
+      animation-delay: 0.18s;
+    }
+    .head-text > :nth-child(5) {
+      animation-delay: 0.24s;
+    }
+  }
+
+  @keyframes soft-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
   }
 
   @media (max-width: 900px) {
