@@ -21,10 +21,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Ambient motion inside mocks only runs while the frame is on screen. */
-:where([data-live]:not(.live)) .web *,
-:where([data-live]:not(.live)) .web *::before,
-:where([data-live]:not(.live)) .web *::after {
+/* Ambient motion inside mocks only runs while the frame is on screen (needs JS to know). */
+:where(.js [data-live]:not(.live)) .web *,
+:where(.js [data-live]:not(.live)) .web *::before,
+:where(.js [data-live]:not(.live)) .web *::after {
   animation-play-state: paused !important;
 }
 

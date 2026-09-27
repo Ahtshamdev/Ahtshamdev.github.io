@@ -365,6 +365,10 @@ export const capabilities = [
     body: 'React Native and Expo, Swift and SwiftUI, Kotlin and Jetpack Compose. Offline data, background work, push, deep links, widgets and store releases.',
   },
   {
+    title: 'Web',
+    body: 'Next.js and React with TypeScript, real-time dashboards, headless commerce, Core Web Vitals work and accessible, responsive interfaces.',
+  },
+  {
     title: 'Backend',
     body: 'Node.js and TypeScript, Ktor, PostgreSQL and PostGIS, Redis, WebSockets. APIs designed around what the app needs on a bad connection.',
   },

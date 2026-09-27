@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { profile, experience, projects, capabilities, education } from '../data/site';
+import { profile, experience, allWork, capabilities, education } from '../data/site';
 import { url } from '../lib/url';
 ---
 
@@ -44,7 +44,7 @@ import { url } from '../lib/url';
 
       <section>
         <h2>Selected projects</h2>
-        {projects.map((p) => (
+        {allWork.map((p) => (
           <div class="r-item">
             <div class="r-line">
               <h3>{p.name}, {p.tagline.toLowerCase()}</h3>

@@ -46,7 +46,8 @@ jobs:
         if: github.event_name != 'pull_request'
         run: npm run build
         env:
-          SITE: ${{ steps.pages.outputs.origin }}
+          # Vercel is the primary host; the Pages copy points search engines there.
+          SITE: https://ahtshamdev-github-io.vercel.app
           BASE: ${{ steps.pages.outputs.base_path }}/
 
       - uses: actions/upload-pages-artifact@v5
