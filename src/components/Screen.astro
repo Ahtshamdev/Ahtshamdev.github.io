@@ -1,0 +1,162 @@
+---
+// Hand-built, static app screens shown inside <Phone>. Colours are the apps' own brand, not site tokens.
+import AppGlyph from './AppGlyph.astro';
+import { projects } from '../data/site';
+import './screen.css';
+
+interface Props {
+  name: 'home' | 'tidewell' | 'kilo' | 'dose' | 'ledger';
+  interactive?: boolean;
+}
+const { name, interactive = false } = Astro.props;
+---
+
+{name === 'home' && (
+  <div class="scr home">
+    <div class="status light"><span>9:41</span><span class="sig" /></div>
+    <div class="clock">
+      <p class="date">Tuesday, 29 September</p>
+      <p class="time num">9:41</p>
+    </div>
+    <div class="widget">
+      <p class="w-title">Shipped this year</p>
+      <p class="w-body"><strong>14</strong> releases across 4 apps</p>
+      <div class="w-bars" aria-hidden="true">
+        {[40, 62, 35, 80, 55, 90, 70, 100, 64, 76, 58, 84].map((h) => <span style={`height:${h}%`} />)}
+      </div>
+    </div>
+    <ul class="grid" role="list">
+      {projects.map((p) => (
+        <li>
+          {interactive ? (
+            <a class="icon-link" href={`#${p.slug}`} tabindex="-1">
+              <span class="icon" style={`background:${p.color}`}><AppGlyph slug={p.slug} /></span>
+              <span class="icon-label">{p.name.split(' ')[0]}</span>
+            </a>
+          ) : (
+            <span class="icon-link">
+              <span class="icon" style={`background:${p.color}`}><AppGlyph slug={p.slug} /></span>
+              <span class="icon-label">{p.name.split(' ')[0]}</span>
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+    <p class="hint">{interactive ? 'Tap an app to read how it was built' : ''}</p>
+    <div class="dock" aria-hidden="true"><span /><span /><span /><span /></div>
+  </div>
+)}
+
+{name === 'tidewell' && (
+  <div class="scr tw">
+    <div class="status"><span>9:41</span><span class="sig" /></div>
+    <header class="tw-head">
+      <div>
+        <p class="tw-kicker">Route 14</p>
+        <p class="tw-title">Today’s assets</p>
+      </div>
+      <span class="tw-sync"><span class="dot" />Offline, 12 queued</span>
+    </header>
+    <div class="tw-map" aria-hidden="true">
+      <svg viewBox="0 0 280 150" preserveAspectRatio="none">
+        <path d="M0 40 H280 M0 95 H280 M60 0 V150 M150 0 V150 M225 0 V150" stroke="#cfe4e5" stroke-width="7" />
+        <path d="M0 125 C60 120 90 70 150 70 S230 30 280 20" stroke="#bcd9db" stroke-width="12" fill="none" />
+        <path d="M30 128 L60 95 L150 95 L150 40 L225 40" stroke="#0e7c86" stroke-width="3.5" fill="none" stroke-dasharray="1 0" stroke-linejoin="round" />
+        <circle cx="60" cy="95" r="7" fill="#0e7c86" stroke="#fff" stroke-width="3" />
+        <circle cx="150" cy="95" r="7" fill="#0e7c86" stroke="#fff" stroke-width="3" />
+        <circle cx="150" cy="40" r="9" fill="#f5a524" stroke="#fff" stroke-width="3" />
+        <circle cx="225" cy="40" r="7" fill="#fff" stroke="#0e7c86" stroke-width="3" />
+        <circle cx="30" cy="128" r="5" fill="#1c1f24" />
+      </svg>
+    </div>
+    <ul class="tw-list" role="list">
+      <li><span class="tag done">Done</span><div><p>Valve V-0874</p><p class="sub">Checked 8:12, 3 photos</p></div></li>
+      <li><span class="tag done">Done</span><div><p>Hydrant H-2231</p><p class="sub">Checked 8:40, flow OK</p></div></li>
+      <li class="next"><span class="tag now">Next</span><div><p>Pump station PS-3</p><p class="sub">Underground, 0.4 km</p></div></li>
+      <li><span class="tag">Later</span><div><p>Hydrant H-2240</p><p class="sub">Last serviced March</p></div></li>
+    </ul>
+    <div class="tw-cta">Start inspection</div>
+  </div>
+)}
+
+{name === 'kilo' && (
+  <div class="scr kl">
+    <div class="status light"><span>9:41</span><span class="sig" /></div>
+    <div class="kl-map" aria-hidden="true">
+      <svg viewBox="0 0 280 330" preserveAspectRatio="xMidYMid slice">
+        <rect width="280" height="330" fill="#22252b" />
+        <path d="M-10 60 L300 110 M-10 200 L300 170 M70 -10 L40 340 M190 -10 L230 340 M-10 290 L300 260" stroke="#30343b" stroke-width="14" />
+        <path d="M0 250 Q80 230 120 180 T210 90 L260 40" stroke="#3a3f47" stroke-width="22" fill="none" />
+        <path d="M52 262 L118 190 L178 176 L208 96" stroke="#e0482b" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        <circle cx="52" cy="262" r="9" fill="#fff" />
+        <circle cx="52" cy="262" r="4" fill="#e0482b" />
+        <circle cx="208" cy="96" r="11" fill="#e0482b" stroke="#fff" stroke-width="3" />
+      </svg>
+      <span class="kl-shift"><span class="dot" />On shift, 3h 12m</span>
+    </div>
+    <div class="kl-sheet">
+      <div class="grab" />
+      <div class="kl-row">
+        <div>
+          <p class="kl-title">New order</p>
+          <p class="kl-sub">14 items, 2 stops, 2.1 km</p>
+        </div>
+        <p class="kl-pay num">Rs 640</p>
+      </div>
+      <ol class="kl-stops" role="list">
+        <li><span class="pin a" />Fresh Mart, Gulberg III</li>
+        <li><span class="pin b" />House 22, Street 9, Model Town</li>
+      </ol>
+      <div class="kl-accept">
+        <span>Accept order</span>
+        <span class="ring num" style="--p: 72%">18</span>
+      </div>
+    </div>
+  </div>
+)}
+
+{name === 'dose' && (
+  <div class="scr ds">
+    <div class="status"><span>9:41</span><span class="sig" /></div>
+    <p class="ds-greet">Good morning, Amina</p>
+    <p class="ds-h">Next dose at 10:00</p>
+    <div class="ds-card">
+      <div class="ds-pill" aria-hidden="true"><AppGlyph slug="dose" size={34} /></div>
+      <p class="ds-name">Metformin</p>
+      <p class="ds-detail">500 mg, 1 tablet<br />with breakfast</p>
+      <div class="ds-taken">Mark as taken</div>
+      <div class="ds-snooze">Remind me in 15 minutes</div>
+    </div>
+    <p class="ds-later-title">Later today</p>
+    <ul class="ds-later" role="list">
+      <li><span class="num">13:00</span><span>Vitamin D, 1 capsule</span></li>
+      <li><span class="num">21:00</span><span>Atorvastatin, 20 mg</span></li>
+    </ul>
+    <div class="ds-week" aria-hidden="true">
+      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+        <span class:list={[i < 1 && 'ok', i === 1 && 'today']}>{d}</span>
+      ))}
+    </div>
+  </div>
+)}
+
+{name === 'ledger' && (
+  <div class="scr lg">
+    <div class="status"><span>9:41</span><span class="sig" /></div>
+    <p class="lg-house">Flat 4B, September</p>
+    <p class="lg-bal num">You’re owed<br /><strong>Rs 3,240</strong></p>
+    <div class="lg-bar" aria-hidden="true"><span style="width:62%" /></div>
+    <p class="lg-budget num">Rs 31,000 of Rs 50,000 budget spent</p>
+    <ul class="lg-people" role="list">
+      <li><span class="av" style="background:#1f8a4c">SA</span><span>Sana</span><span class="num pos">+2,100</span></li>
+      <li><span class="av" style="background:#b7791f">HR</span><span>Hamza</span><span class="num pos">+1,140</span></li>
+    </ul>
+    <p class="lg-sec">Recent</p>
+    <ul class="lg-tx" role="list">
+      <li><span>Electricity bill</span><span class="num">Rs 8,460</span></li>
+      <li><span>Groceries, Imtiaz</span><span class="num">Rs 5,215</span></li>
+      <li><span>Internet</span><span class="num">Rs 3,000</span></li>
+    </ul>
+    <div class="lg-fab">Add expense</div>
+  </div>
+)}

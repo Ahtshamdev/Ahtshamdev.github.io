@@ -1,0 +1,456 @@
+---
+import Base from '../../layouts/Base.astro';
+import Phone from '../../components/Phone.astro';
+import Screen from '../../components/Screen.astro';
+import { projects, architecture, type Project } from '../../data/site';
+import { url } from '../../lib/url';
+
+export function getStaticPaths() {
+  return projects.map((project, i) => ({
+    params: { slug: project.slug },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+interface Props {
+  project: Project;
+  next: Project;
+}
+
+const { project: p, next } = Astro.props;
+const arch = architecture[p.slug];
+type ScreenName = 'tidewell' | 'kilo' | 'dose' | 'ledger';
+---
+
+<Base title={`${p.name} case study`} description={p.summary}>
+  <article class="case" style={`--brand:${p.color}`}>
+    <header class="wrap head">
+      <div class="head-text">
+        <a class="back link muted" href={url('#work')}>All work</a>
+        <h1>{p.name}</h1>
+        <p class="tagline">{p.tagline}</p>
+        <p class="summary">{p.summary}</p>
+        <dl class="meta">
+          <div><dt>Role</dt><dd>{p.role}</dd></div>
+          <div><dt>When</dt><dd class="num">{p.year}</dd></div>
+          <div><dt>Team</dt><dd>{p.team}</dd></div>
+          <div><dt>Platforms</dt><dd>{p.platforms}</dd></div>
+        </dl>
+      </div>
+      <div class="head-phone">
+        <Phone label={`${p.name} app screen`}><Screen name={p.slug as ScreenName} /></Phone>
+      </div>
+    </header>
+
+    <section class="wrap results" aria-label="Results">
+      <dl class="metrics">
+        {p.metrics.map((m) => (
+          <div>
+            <dt>{m.value}</dt>
+            <dd>{m.label}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <div class="wrap body">
+      <section class="block">
+        <h2>The problem</h2>
+        <div class="prose">{p.problem.map((t) => <p>{t}</p>)}</div>
+      </section>
+
+      <section class="block">
+        <h2>Constraints</h2>
+        <ul class="prose bullets">{p.constraints.map((t) => <li>{t}</li>)}</ul>
+      </section>
+
+      {arch && (
+        <section class="block">
+          <h2>How it fits together</h2>
+          <figure class="arch" aria-label={`Architecture of ${p.name}`}>
+            <div class="lane">
+              <p class="lane-title">On the device</p>
+              <ul role="list">{arch.device.map((n) => <li>{n}</li>)}</ul>
+            </div>
+            <div class="wire">
+              <span class="wire-line" aria-hidden="true"></span>
+              <span class="wire-label">{arch.link}</span>
+            </div>
+            <div class="lane">
+              <p class="lane-title">In the cloud</p>
+              <ul role="list">{arch.server.map((n) => <li>{n}</li>)}</ul>
+            </div>
+          </figure>
+        </section>
+      )}
+
+      <section class="block">
+        <h2>Key decisions</h2>
+        <div class="decisions">
+          {p.decisions.map((d) => (
+            <div class="decision">
+              <h3>{d.title}</h3>
+              <p>{d.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>Outcome</h2>
+        <div class="prose">{p.outcome.map((t) => <p>{t}</p>)}</div>
+      </section>
+
+      <section class="block">
+        <h2>What I’d change</h2>
+        <div class="prose"><p>{p.retro}</p></div>
+      </section>
+
+      <section class="block">
+        <h2>Stack</h2>
+        <ul class="stack" role="list">{p.stack.map((s) => <li>{s}</li>)}</ul>
+      </section>
+    </div>
+
+    <nav class="next" aria-label="Next case study" style={`--next:${next.color}`}>
+      <div class="wrap">
+        <a href={url(`work/${next.slug}`)}>
+          <span class="muted">Next case study</span>
+          <span class="next-name">{next.name}</span>
+          <span class="muted">{next.tagline}</span>
+        </a>
+      </div>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 3rem clamp(2rem, 6vw, 6rem);
+    align-items: center;
+    padding-block: clamp(2.5rem, 8vh, 5rem);
+  }
+
+  .back {
+    font-size: var(--step--1);
+  }
+
+  h1 {
+    margin-top: 1.5rem;
+    font-size: var(--step-4);
+    letter-spacing: -0.05em;
+    line-height: 0.95;
+  }
+
+  h1::after {
+    content: '';
+    display: block;
+    width: 3.5rem;
+    height: 6px;
+    margin-top: 1.25rem;
+    border-radius: 3px;
+    background: var(--brand);
+  }
+
+  .tagline {
+    margin-top: 1.25rem;
+    font-size: var(--step-2);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    max-width: 22ch;
+  }
+
+  .summary {
+    margin-top: 1.25rem;
+    color: var(--muted);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    max-width: 38rem;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, auto));
+    justify-content: start;
+    gap: 1rem 2.5rem;
+    margin: 2.25rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    font-size: var(--step--1);
+  }
+
+  .meta dt {
+    color: var(--muted);
+  }
+
+  .meta dd {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .results {
+    padding-block: 2.5rem;
+    border-block: 1px solid var(--line);
+    background: var(--surface);
+    max-width: none;
+  }
+
+  .metrics {
+    max-width: calc(var(--max) - 2 * var(--gutter));
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .metrics div {
+    border-left: 3px solid var(--brand);
+    padding-left: 1rem;
+  }
+
+  .metrics dt {
+    font-size: var(--step-3);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .metrics dd {
+    margin: 0.5rem 0 0;
+    color: var(--muted);
+  }
+
+  .body {
+    padding-block: clamp(3rem, 8vh, 5rem);
+  }
+
+  .block {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 1rem clamp(2rem, 6vw, 6rem);
+    padding-block: 2.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .block:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .block h2 {
+    font-size: var(--step-1);
+    letter-spacing: -0.02em;
+  }
+
+  .prose {
+    display: grid;
+    gap: 1rem;
+    max-width: 40rem;
+  }
+
+  .bullets {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .bullets li::marker {
+    color: var(--brand);
+  }
+
+  .arch {
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 7.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .lane {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    padding: 1rem;
+  }
+
+  .lane-title {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .lane ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .lane li {
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius-s);
+    background: var(--paper);
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-left: 3px solid var(--brand);
+  }
+
+  .wire {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .wire-line {
+    width: 100%;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--brand) 0 8px, transparent 8px 13px);
+    position: relative;
+  }
+
+  .wire-line::before,
+  .wire-line::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--brand);
+  }
+
+  .wire-line::before {
+    left: -2px;
+  }
+
+  .wire-line::after {
+    right: -2px;
+  }
+
+  .wire-label {
+    font-size: 0.8rem;
+    line-height: 1.3;
+    color: var(--muted);
+  }
+
+  .decisions {
+    display: grid;
+    gap: 1.75rem;
+    max-width: 40rem;
+  }
+
+  .decision h3 {
+    font-size: var(--step-0);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.35rem;
+  }
+
+  .decision p {
+    color: var(--muted);
+  }
+
+  .stack {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .stack li {
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: var(--step--1);
+    font-weight: 500;
+  }
+
+  .next {
+    border-top: 1px solid var(--line);
+  }
+
+  .next a {
+    display: grid;
+    gap: 0.35rem;
+    padding-block: clamp(3rem, 10vh, 6rem);
+    text-decoration: none;
+  }
+
+  .next-name {
+    font-size: var(--step-4);
+    font-weight: 750;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+
+  .next a:hover .next-name {
+    color: var(--next);
+  }
+
+  @media (max-width: 900px) {
+    .head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .head-phone {
+      display: flex;
+      justify-content: center;
+    }
+
+    .meta {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .block {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .metrics {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.25rem;
+    }
+
+    .arch {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .wire {
+      padding-block: 0.5rem;
+    }
+
+    .wire-line {
+      width: 2px;
+      height: 2.5rem;
+      background: repeating-linear-gradient(180deg, var(--brand) 0 8px, transparent 8px 13px);
+    }
+
+    .wire-line::before,
+    .wire-line::after {
+      left: -4px;
+      right: auto;
+    }
+
+    .wire-line::before {
+      top: -2px;
+    }
+
+    .wire-line::after {
+      top: auto;
+      bottom: -2px;
+    }
+
+    .head-phone :global(.phone) {
+      zoom: 0.86;
+    }
+  }
+</style>

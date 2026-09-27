@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+
+<Base title="Page not found" description="This page does not exist.">
+  <section class="wrap nf">
+    <h1>This page isn’t here.</h1>
+    <p class="muted">The link may be old, or the address may have a typo.</p>
+    <a class="btn btn-solid" href={url()}>Go to the portfolio</a>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 70svh;
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 1.25rem;
+  }
+
+  h1 {
+    font-size: var(--step-4);
+    letter-spacing: -0.045em;
+  }
+</style>

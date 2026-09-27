@@ -1,0 +1,568 @@
+---
+import Base from '../layouts/Base.astro';
+import Phone from '../components/Phone.astro';
+import Screen from '../components/Screen.astro';
+import { profile, projects, experience, capabilities } from '../data/site';
+import { url } from '../lib/url';
+
+type ScreenName = 'home' | 'tidewell' | 'kilo' | 'dose' | 'ledger';
+const origins = ['14% 57%', '38% 57%', '62% 57%', '86% 57%'];
+---
+
+<Base>
+  <div class="wrap showcase">
+    <div class="flow">
+      <section class="hero" data-screen="home" aria-labelledby="hero-title">
+        <p class="avail"><span class="pulse" aria-hidden="true"></span>{profile.available}</p>
+        <h1 id="hero-title">{profile.headline}</h1>
+        <p class="intro">{profile.intro}</p>
+        <div class="actions">
+          <a class="btn btn-solid" href="#work">See four apps I built</a>
+          <a class="btn btn-ghost" href={`mailto:${profile.email}`}>Email me</a>
+        </div>
+        <dl class="facts">
+          <div><dt>Based in</dt><dd>{profile.location}</dd></div>
+          <div><dt>Works in</dt><dd>React Native, Swift, Kotlin, Node.js</dd></div>
+        </dl>
+        <div class="inline-phone" aria-hidden="true">
+          <Phone label="Home screen with four apps"><Screen name="home" /></Phone>
+        </div>
+      </section>
+
+      <section id="work" class="work" aria-labelledby="work-title">
+        <h2 id="work-title" class="section-title">Selected work</h2>
+        {projects.map((p) => (
+          <article id={p.slug} class="project" data-screen={p.slug} style={`--brand:${p.color}`} aria-labelledby={`${p.slug}-title`}>
+            <div class="inline-phone" aria-hidden="true">
+              <Phone label={`${p.name} app`}><Screen name={p.slug as ScreenName} /></Phone>
+            </div>
+            <p class="p-year muted num">{p.year}</p>
+            <h3 id={`${p.slug}-title`}>
+              <a href={url(`work/${p.slug}`)}>{p.name}</a>
+            </h3>
+            <p class="p-tagline">{p.tagline}</p>
+            <p class="p-summary">{p.summary}</p>
+            <dl class="metrics">
+              {p.metrics.map((m) => (
+                <div>
+                  <dt>{m.value}</dt>
+                  <dd>{m.label}</dd>
+                </div>
+              ))}
+            </dl>
+            <p class="p-meta muted">
+              {p.role}. Built with {p.stack.slice(0, 4).join(', ')}.
+            </p>
+            <a class="p-more link" href={url(`work/${p.slug}`)}>Read the {p.name} case study</a>
+          </article>
+        ))}
+      </section>
+    </div>
+
+    <aside class="stage" aria-hidden="true">
+      <div class="stage-inner">
+        <Phone label="App preview">
+          <div class="layer on" data-layer="home"><Screen name="home" interactive /></div>
+          {projects.map((p, i) => (
+            <div class="layer app" data-layer={p.slug} style={`transform-origin:${origins[i]}`}>
+              <Screen name={p.slug as ScreenName} />
+            </div>
+          ))}
+        </Phone>
+        <p class="stage-caption muted" data-caption>Home screen</p>
+      </div>
+    </aside>
+  </div>
+
+  <section id="experience" class="band" aria-labelledby="exp-title">
+    <div class="wrap two">
+      <div>
+        <h2 id="exp-title" class="section-title">Experience</h2>
+        <p class="muted side">Seven years, four teams, and a habit of staying through the second version.</p>
+        <a class="btn btn-ghost small" href={url('resume')}>View résumé</a>
+      </div>
+      <ol class="timeline" role="list">
+        {experience.map((r) => (
+          <li>
+            <p class="t-period muted num">{r.period}</p>
+            <div>
+              <h3>{r.title}, {r.company}</h3>
+              <p class="muted">{r.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="cap-title">
+    <div class="wrap two">
+      <div>
+        <h2 id="cap-title" class="section-title">What I work on</h2>
+      </div>
+      <div class="caps">
+        {capabilities.map((c) => (
+          <div>
+            <h3>{c.title}</h3>
+            <p class="muted">{c.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <h2 id="contact-title">Building something people will use on the move? I’d like to hear about it.</h2>
+      <div class="actions">
+        <a class="btn btn-solid" href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a class="btn btn-ghost" href={profile.github}>GitHub</a>
+        <a class="btn btn-ghost" href={url('resume')}>Résumé</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const stage = document.querySelector<HTMLElement>('.stage');
+  const layers = [...document.querySelectorAll<HTMLElement>('[data-layer]')];
+  const caption = document.querySelector<HTMLElement>('[data-caption]');
+  const names: Record<string, string> = { home: 'Home screen' };
+  document.querySelectorAll<HTMLElement>('.project').forEach((el) => {
+    names[el.dataset.screen!] = el.querySelector('h3')?.textContent?.trim() ?? '';
+  });
+
+  let current = 'home';
+  function show(name: string) {
+    if (name === current) return;
+    current = name;
+    layers.forEach((l) => l.classList.toggle('on', l.dataset.layer === name));
+    if (caption) caption.textContent = names[name] ?? '';
+  }
+
+  if (stage && getComputedStyle(stage).display !== 'none') {
+    const sections = [...document.querySelectorAll<HTMLElement>('[data-screen]')];
+    const visible = new Map<HTMLElement, number>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => visible.set(e.target as HTMLElement, e.intersectionRatio));
+        let best: HTMLElement | null = null;
+        let bestRatio = 0;
+        visible.forEach((r, el) => {
+          if (r > bestRatio) {
+            best = el;
+            bestRatio = r;
+          }
+        });
+        if (best) show((best as HTMLElement).dataset.screen!);
+      },
+      { rootMargin: '-35% 0px -45% 0px', threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] },
+    );
+    sections.forEach((s) => io.observe(s));
+  }
+</script>
+
+<style>
+  .showcase {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: clamp(2rem, 6vw, 7rem);
+    align-items: start;
+  }
+
+  .flow {
+    min-width: 0;
+  }
+
+  /* Hero */
+  .hero {
+    padding-block: clamp(2.5rem, 7vh, 5rem) clamp(3rem, 8vh, 6rem);
+    min-height: calc(100svh - 64px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .avail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1f9d55;
+    box-shadow: 0 0 0 0 rgb(31 157 85 / 0.5);
+    animation: pulse 2.4s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    to {
+      box-shadow: 0 0 0 10px rgb(31 157 85 / 0);
+    }
+  }
+
+  h1 {
+    font-size: var(--step-4);
+    font-weight: 750;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+    max-width: 13ch;
+  }
+
+  .intro {
+    margin-top: 1.75rem;
+    font-size: var(--step-1);
+    line-height: 1.45;
+    color: var(--muted);
+    max-width: 36rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 3rem;
+    margin: 3rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    font-size: var(--step--1);
+  }
+
+  .facts dt {
+    color: var(--muted);
+  }
+
+  .facts dd {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  /* Work */
+  .section-title {
+    font-size: var(--step-2);
+    letter-spacing: -0.03em;
+  }
+
+  .work > .section-title {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .project {
+    padding-block: clamp(3rem, 8vh, 5rem);
+    min-height: 80svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .project:last-child {
+    border-bottom: 0;
+  }
+
+  .p-year {
+    font-size: var(--step--1);
+  }
+
+  .project h3 {
+    font-size: var(--step-3);
+    letter-spacing: -0.04em;
+    margin-top: 0.4rem;
+  }
+
+  .project h3 a {
+    text-decoration: none;
+    background-image: linear-gradient(var(--brand), var(--brand));
+    background-size: 0% 3px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .project h3 a:hover {
+    background-size: 100% 3px;
+  }
+
+  .p-tagline {
+    font-size: var(--step-1);
+    font-weight: 500;
+    margin-top: 0.35rem;
+  }
+
+  .p-summary {
+    margin-top: 1.25rem;
+    max-width: 38rem;
+    color: var(--muted);
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0 0;
+    max-width: 38rem;
+  }
+
+  .metrics div {
+    border-left: 3px solid var(--brand);
+    padding-left: 0.85rem;
+  }
+
+  .metrics dt {
+    font-size: var(--step-2);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .metrics dd {
+    margin: 0.3rem 0 0;
+    font-size: var(--step--1);
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .p-meta {
+    margin-top: 1.75rem;
+    font-size: var(--step--1);
+  }
+
+  .p-more {
+    margin-top: 0.9rem;
+    align-self: flex-start;
+    font-weight: 600;
+  }
+
+  /* Stage */
+  .stage {
+    position: sticky;
+    top: 64px;
+    height: calc(100svh - 64px);
+    display: grid;
+    place-items: center;
+  }
+
+  .stage-inner {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+  }
+
+  .stage .layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.35s ease,
+      transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s linear 0.45s;
+  }
+
+  .stage .layer.app {
+    transform: scale(0.2);
+    border-radius: 40px;
+  }
+
+  .stage .layer.on {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.3s ease,
+      transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s;
+  }
+
+  .stage .layer[data-layer='home'] {
+    z-index: 0;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .stage-caption {
+    font-size: var(--step--1);
+    min-height: 1.5em;
+  }
+
+  .inline-phone {
+    display: none;
+  }
+
+  /* Bands */
+  .band {
+    border-top: 1px solid var(--line);
+    padding-block: clamp(4rem, 10vh, 7rem);
+  }
+
+  .two {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 2rem clamp(2rem, 6vw, 6rem);
+  }
+
+  .side {
+    margin-top: 0.75rem;
+    max-width: 22rem;
+  }
+
+  .small {
+    min-height: 40px;
+    font-size: var(--step--1);
+    margin-top: 1.5rem;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: 1.5rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .timeline li:first-child {
+    border-top: 0;
+    padding-top: 0.35rem;
+  }
+
+  .timeline h3,
+  .caps h3 {
+    font-size: var(--step-1);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+
+  .t-period {
+    font-size: var(--step--1);
+    padding-top: 0.25rem;
+  }
+
+  .caps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .contact {
+    background: var(--ink);
+    color: var(--paper);
+    padding-block: clamp(5rem, 14vh, 9rem);
+  }
+
+  .contact h2 {
+    font-size: var(--step-3);
+    letter-spacing: -0.04em;
+    max-width: 20ch;
+  }
+
+  .contact .btn {
+    border-color: var(--paper);
+  }
+
+  .contact .btn-solid {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .contact .btn-solid:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .contact .btn-ghost {
+    color: var(--paper);
+  }
+
+  .contact .btn-ghost:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  @media (max-width: 960px) {
+    .showcase {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stage {
+      display: none;
+    }
+
+    .inline-phone {
+      display: flex;
+      justify-content: center;
+      margin-block: 2.5rem 0.5rem;
+      order: 10;
+    }
+
+    .project .inline-phone {
+      order: 0;
+      margin-block: 0 2rem;
+      justify-content: flex-start;
+    }
+
+    .hero {
+      min-height: 0;
+    }
+
+    .project {
+      min-height: 0;
+    }
+
+    .two,
+    .caps {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .metrics {
+      gap: 0.75rem;
+    }
+
+    .metrics div {
+      padding-left: 0.6rem;
+    }
+
+    .metrics dt {
+      font-size: var(--step-1);
+    }
+
+    .metrics dd {
+      font-size: 0.8rem;
+    }
+
+    .timeline li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.25rem;
+    }
+
+    .inline-phone :global(.phone) {
+      zoom: 0.86;
+    }
+
+    .project .inline-phone {
+      justify-content: center;
+    }
+  }
+</style>
