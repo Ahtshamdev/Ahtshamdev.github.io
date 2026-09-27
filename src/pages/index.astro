@@ -96,11 +96,20 @@ const words = profile.headline.split(' ');
       </div>
       {sites.map((p) => (
         <article id={p.slug} class="site" style={`--brand:${p.color}`} aria-labelledby={`${p.slug}-title`}>
-          <div class="site-frame" data-live style={`view-transition-name:device-${p.slug}`}>
+          <a
+            class="site-frame"
+            href={p.demo}
+            target="_blank"
+            rel="noopener"
+            aria-label={`Open the ${p.name} live demo in a new tab`}
+            data-live
+            style={`view-transition-name:device-${p.slug}`}
+          >
             <Browser domain={p.domain!} label={`${p.name} website`} scrolls={p.slug === 'loom'}>
               <WebScreen name={p.slug as SiteName} />
             </Browser>
-          </div>
+            <span class="demo-badge" aria-hidden="true">Open live demo</span>
+          </a>
           <div class="site-text">
             <div>
               <p class="p-year muted num">{p.year}</p>
@@ -119,7 +128,11 @@ const words = profile.headline.split(' ');
                   </div>
                 ))}
               </dl>
-              <a class="p-more link" href={url(`work/${p.slug}`)}>Read the {p.name} case study</a>
+              <p class="site-links">
+                <a class="btn btn-solid small" href={p.demo} target="_blank" rel="noopener">Open live demo</a>
+                <a class="p-more link" href={url(`work/${p.slug}`)}>Read the {p.name} case study</a>
+              </p>
+              <p class="demo-url muted">{p.demo?.replace('https://', '')}</p>
             </div>
           </div>
         </article>
@@ -714,9 +727,57 @@ const words = profile.headline.split(' ');
     margin-top: 0;
   }
 
-  .site .p-more {
-    display: inline-block;
+  .site-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
     margin-top: 1.75rem;
+  }
+
+  .site-links .small {
+    margin-top: 0;
+  }
+
+  .demo-url {
+    margin-top: 0.6rem;
+    font-size: var(--step--1);
+  }
+
+  .site-frame {
+    display: block;
+    position: relative;
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .site-frame:focus-visible {
+    outline-offset: 6px;
+  }
+
+  .demo-badge {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: var(--step--1);
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.2s,
+      transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .site-frame:hover .demo-badge,
+  .site-frame:focus-visible .demo-badge {
+    opacity: 1;
+    transform: none;
   }
 
   .btn:active {

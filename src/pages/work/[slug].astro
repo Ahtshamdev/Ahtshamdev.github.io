@@ -39,6 +39,12 @@ const isWeb = p.kind === 'web';
           <div><dt>When</dt><dd class="num">{p.year}</dd></div>
           <div><dt>Team</dt><dd>{p.team}</dd></div>
           <div><dt>Platforms</dt><dd>{p.platforms}</dd></div>
+          {p.demo && (
+            <div>
+              <dt>Live demo</dt>
+              <dd><a class="link" href={p.demo} target="_blank" rel="noopener">{p.demo.replace('https://', '')}</a></dd>
+            </div>
+          )}
         </dl>
       </div>
       {isWeb ? (
@@ -191,7 +197,8 @@ const isWeb = p.kind === 'web';
 
   .meta {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, auto));
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
     justify-content: start;
     gap: 1rem 2.5rem;
     margin: 2.25rem 0 0;
@@ -457,6 +464,7 @@ const isWeb = p.kind === 'web';
     }
 
     .meta {
+      grid-auto-flow: row;
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 

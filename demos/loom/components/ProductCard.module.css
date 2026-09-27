@@ -1,0 +1,76 @@
+.card {
+  position: relative;
+  min-width: 0;
+}
+
+.link {
+  display: block;
+  text-decoration: none;
+}
+
+.art {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 4px;
+  background: var(--panel);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 12% 16%;
+}
+
+.runner {
+  padding: 6% 32%;
+}
+
+.rug {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 14px 14px rgb(42 33 27 / 0.22));
+  transition: transform 500ms var(--ease);
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--page);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.name {
+  margin-top: 12px;
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.link:hover .name {
+  text-decoration: underline;
+}
+
+.meta {
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.type {
+  font-size: 0.8125rem;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .link:hover .rug {
+    transform: translateY(-6px) rotate(-1.2deg);
+  }
+}

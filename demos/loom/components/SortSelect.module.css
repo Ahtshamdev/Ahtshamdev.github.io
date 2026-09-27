@@ -1,0 +1,44 @@
+.form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: opacity 150ms;
+}
+
+.form[data-pending] {
+  opacity: 0.6;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.select {
+  appearance: none;
+  min-height: 44px;
+  padding: 0 38px 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%232a211b' stroke-width='1.5'/%3E%3C/svg%3E")
+      no-repeat right 14px center,
+    var(--page);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.select:hover {
+  border-color: var(--ink);
+}
+
+.apply {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--page);
+}

@@ -1,0 +1,85 @@
+.form {
+  display: grid;
+  gap: 22px;
+}
+
+.price {
+  font-size: 1.375rem;
+}
+
+.sizes {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.legend {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.option {
+  position: relative;
+  cursor: pointer;
+}
+
+.radio {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.box {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--page);
+  transition: border-color 150ms, background-color 150ms;
+}
+
+.sizeLabel {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.sizePrice {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.option:hover .box {
+  border-color: var(--ink);
+}
+
+.radio:checked + .box {
+  border-color: var(--ink);
+  background: var(--panel);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.radio:focus-visible + .box {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.add {
+  width: 100%;
+  min-height: 52px;
+}
+
+.note {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}

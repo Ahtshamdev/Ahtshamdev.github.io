@@ -1,0 +1,102 @@
+.gallery {
+  display: grid;
+  gap: 12px;
+}
+
+.stage {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 6px;
+  background: var(--panel-deep);
+  overflow: hidden;
+}
+
+.view {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 9% 14%;
+}
+
+.view[hidden] {
+  display: none;
+}
+
+.view > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.view:not(.fill) > svg {
+  filter: drop-shadow(0 22px 18px rgb(42 33 27 / 0.28));
+}
+
+.view.fill {
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .view:not([hidden]) {
+    animation: fade 320ms var(--ease);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 76px));
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.thumb {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: none;
+  cursor: pointer;
+  transition: border-color 150ms;
+}
+
+.thumb[aria-pressed='true'] {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.thumb:hover {
+  border-color: var(--border-strong);
+}
+
+.thumbArt {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  margin: 3px;
+  border-radius: 3px;
+  background: var(--panel-deep);
+  overflow: hidden;
+  padding: 10% 16%;
+}
+
+.thumbArt.fill {
+  padding: 0;
+}
+
+.thumbArt > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.caption {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}

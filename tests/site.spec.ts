@@ -49,6 +49,19 @@ test('unknown pages show the 404 page', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'This page isn’t here.' })).toBeVisible();
 });
 
+test('navigation fits a 320px screen and keeps its links accessible', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'This test explicitly sets its own narrow viewport.');
+  await page.setViewportSize({ width: 320, height: 800 });
+  for (const path of ['/', '/work/dispatch', '/work/loom', '/resume']) {
+    await page.goto(path);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+    const nav = page.getByRole('navigation', { name: 'Main' });
+    await expect(nav.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Résumé', exact: true })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Contact', exact: true })).toBeVisible();
+  }
+});
+
 test('sticky phone opens each app as its case study scrolls into view', async ({ page, isMobile }) => {
   test.skip(isMobile, 'The sticky phone is desktop only; mobile shows one phone per project.');
   await page.goto('/');
@@ -98,6 +111,16 @@ test('metrics count up to their exact final values', async ({ page }) => {
 
 test('websites render inside browser frames with their domains', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#dispatch .browser')).toContainText('dispatch.kilo.app');
-  await expect(page.locator('#loom .browser')).toContainText('loomandfield.com');
+  await expect(page.locator('#dispatch .browser')).toContainText('kilo-dispatch-demo.vercel.app');
+  await expect(page.locator('#loom .browser')).toContainText('loom-and-field-demo.vercel.app');
+});
+
+test('each website links to its live demo in a new tab', async ({ page }) => {
+  await page.goto('/');
+  for (const [slug, host] of [['dispatch', 'kilo-dispatch-demo'], ['loom', 'loom-and-field-demo']]) {
+    const frame = page.locator(`#${slug} a.site-frame`);
+    await expect(frame).toHaveAttribute('href', `https://${host}.vercel.app`);
+    await expect(frame).toHaveAttribute('target', '_blank');
+    await expect(frame).toHaveAttribute('rel', /noopener/);
+  }
 });

@@ -1,0 +1,11 @@
+.head {
+  padding: 40px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  font-family: var(--serif);
+  font-size: clamp(2.25rem, 6vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}

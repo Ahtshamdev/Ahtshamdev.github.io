@@ -1,0 +1,61 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.label {
+  display: none;
+}
+
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--page);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.bump {
+  animation: bump 520ms var(--ease);
+}
+
+@keyframes bump {
+  0% {
+    transform: scale(1);
+    background: var(--ink);
+  }
+  35% {
+    transform: scale(1.35);
+    background: var(--accent);
+  }
+  100% {
+    transform: scale(1);
+    background: var(--ink);
+  }
+}
+
+@media (min-width: 720px) {
+  .label {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bump {
+    animation: none;
+  }
+}

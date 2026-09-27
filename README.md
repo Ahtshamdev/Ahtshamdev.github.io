@@ -2,6 +2,11 @@
 
 Personal portfolio for a mobile and full-stack engineer: four case studies, an experience timeline and a printable résumé.
 
+The Websites section also links to two working demos:
+
+- [Kilo Dispatch](https://kilo-dispatch-demo.vercel.app): a simulated courier control room with a live map, order queue and reassignment.
+- [Loom & Field](https://loom-and-field-demo.vercel.app): a woven-goods storefront with filtering, product galleries and a persistent shopping bag. Checkout is a demonstration and accepts no payments.
+
 The home page pairs each case study with a phone that opens the matching app as you scroll. The app screens are HTML and CSS rather than screenshots, so they stay sharp at any size and in any theme.
 
 ## Stack
@@ -38,7 +43,11 @@ src/
   pages/                home, work/[slug], résumé, 404
   styles/global.css     tokens and base styles
 tests/                  Playwright specs
+demos/dispatch/         independent Next.js dispatch demo
+demos/loom/             independent Next.js storefront demo
 ```
+
+Each demo has its own dependencies and build. Run `npm ci`, `npm run build` and `npm run lint` within its folder. Vercel connects all three projects to this repository: the portfolio uses the repository root, and the demo projects use `demos/dispatch` and `demos/loom` as their Root Directory. A push to `main` publishes the portfolio and affected demos.
 
 ## Quality
 

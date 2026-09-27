@@ -21,6 +21,8 @@ export type Project = {
   kind: 'app' | 'web';
   /** Web projects: the address shown in the browser frame. */
   domain?: string;
+  /** Web projects: a working demo anyone can open. */
+  demo?: string;
   name: string;
   tagline: string;
   summary: string;
@@ -230,7 +232,8 @@ export const sites: Project[] = [
   {
     slug: 'dispatch',
     kind: 'web',
-    domain: 'dispatch.kilo.app',
+    domain: 'kilo-dispatch-demo.vercel.app',
+    demo: 'https://kilo-dispatch-demo.vercel.app',
     name: 'Kilo Dispatch',
     tagline: 'A live control room for 900 couriers',
     summary:
@@ -277,7 +280,8 @@ export const sites: Project[] = [
   {
     slug: 'loom',
     kind: 'web',
-    domain: 'loomandfield.com',
+    domain: 'loom-and-field-demo.vercel.app',
+    demo: 'https://loom-and-field-demo.vercel.app',
     name: 'Loom & Field',
     tagline: 'A storefront that loads before you blink',
     summary:

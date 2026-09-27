@@ -16,6 +16,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  demos:
+    name: Verify ${{ matrix.demo }} demo
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        demo: [dispatch, loom]
+    defaults:
+      run:
+        working-directory: demos/${{ matrix.demo }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: demos/${{ matrix.demo }}/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npx tsc --noEmit
+
   build:
     runs-on: ubuntu-latest
     steps:

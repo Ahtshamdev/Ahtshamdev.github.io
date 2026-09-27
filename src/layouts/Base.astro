@@ -218,4 +218,16 @@ const isHome = path === url();
       font-size: 0.875rem;
     }
   }
+
+  @media (max-width: 360px) {
+    .bar {
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      padding-block: 0.5rem;
+    }
+    nav {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
 </style>
