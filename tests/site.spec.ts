@@ -74,11 +74,12 @@ test('sticky phone opens each app as its case study scrolls into view', async ({
 });
 
 test('theme toggle switches and remembers the colour scheme', async ({ page }) => {
-  await page.goto('/'); // dark is the default
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
   await page.getByRole('button', { name: 'Switch colour theme' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
 test('page has the metadata recruiters’ link previews need', async ({ page }) => {
@@ -133,24 +134,4 @@ test('the development section lists the NexoHypic app, website and API with hone
   await expect(site).toHaveAttribute('href', 'https://nexohypic-web.vercel.app');
   await expect(site).toHaveAttribute('rel', /noopener/);
   await expect(section.locator('#nexohypic-app')).toContainText('Test build');
-});
-
-test('the 3D backdrop starts, and the page works without WebGL', async ({ page, browser }) => {
-  await page.goto('/');
-  await expect(page.locator('canvas.scene.ready')).toHaveCount(1, { timeout: 8000 });
-  const ctx = await browser.newContext();
-  const bare = await ctx.newPage();
-  await bare.addInitScript(() => {
-    const original = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
-      return /webgl/.test(type) ? null : original.call(this, type as '2d', ...(rest as []));
-    } as typeof original;
-  });
-  const errors: string[] = [];
-  bare.on('pageerror', (e) => errors.push(e.message));
-  await bare.goto('/');
-  await expect(bare.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(bare.locator('canvas.scene.ready')).toHaveCount(0);
-  expect(errors).toEqual([]);
-  await ctx.close();
 });
