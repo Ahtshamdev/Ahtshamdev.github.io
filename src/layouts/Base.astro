@@ -26,8 +26,7 @@ const isHome = path === url();
     <meta name="author" content={profile.name} />
     {canonical && <link rel="canonical" href={canonical} />}
     <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
-    <meta name="theme-color" content="#eceef1" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#16181c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#07080f" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -43,6 +42,8 @@ const isHome = path === url();
     </script>
   </head>
   <body>
+    <div class="glow" aria-hidden="true"></div>
+    <canvas class="scene" data-scene aria-hidden="true"></canvas>
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="wrap bar">
@@ -88,11 +89,19 @@ const isHome = path === url();
     </footer>
 
     <script>
+      // The 3D backdrop is optional: it loads after the page is interactive and is skipped without WebGL.
+      const canvas = document.querySelector<HTMLCanvasElement>('[data-scene]');
+      if (canvas) {
+        const start = () => import('../scripts/scene').then((m) => m.initScene(canvas)).catch(() => {});
+        'requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 1500 }) : setTimeout(start, 400);
+      }
+    </script>
+    <script>
       const btn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
       btn?.addEventListener('click', () => {
         const root = document.documentElement;
         const current =
-          root.dataset.theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          root.dataset.theme ?? 'dark';
         const next = current === 'dark' ? 'light' : 'dark';
         root.dataset.theme = next;
         try {
@@ -109,7 +118,7 @@ const isHome = path === url();
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--paper) 94%, transparent);
+    background: color-mix(in srgb, var(--paper) 62%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
