@@ -329,69 +329,6 @@ export const sites: Project[] = [
 /** Apps and websites in display order, used for case study pages. */
 export const allWork: Project[] = [...projects, ...sites];
 
-export type Build = {
-  slug: string;
-  name: string;
-  kind: string;
-  status: string;
-  summary: string;
-  facts: string[];
-  stack: string[];
-  /** Live, public links only. Private repositories are deliberately not linked. */
-  links: { label: string; href: string }[];
-};
-
-/** Things I am building right now. Status lines are literal: nothing here claims a store release or verified data. */
-export const development: Build[] = [
-  {
-    slug: 'nexohypic-app',
-    name: 'NexoHypic for Android',
-    kind: 'Android app',
-    status: 'Test build, in-app updates',
-    summary:
-      'A field guide for snakes, plants, crops and plant diseases in Pakistan. Take a photo, get a ranked AI estimate with honest uncertainty, and read clearly labelled reference records in English, Urdu or Roman Urdu.',
-    facts: [
-      'Kotlin and Jetpack Compose, with emulator tests running in CI on every push.',
-      'Fair daily limits enforced on the server, so the app cannot be used to burn AI credits.',
-      'Updates itself from the same server as the website: tap “Update now”, no reinstall.',
-      'Reference data is marked unverified until a person checks it; the app says so.',
-    ],
-    stack: ['Kotlin', 'Jetpack Compose', 'OkHttp', 'GitHub Actions'],
-    links: [{ label: 'Get the Android build', href: 'https://nexohypic-web.vercel.app/app' }],
-  },
-  {
-    slug: 'nexohypic-web',
-    name: 'NexoHypic website',
-    kind: 'Website and installable web app',
-    status: 'Live',
-    summary:
-      'The web side of the same product: a cinematic 3D explorer of snakes and plants, the same AI identification, an account with private history, and an install page for the web app and the Android build.',
-    facts: [
-      'React, TypeScript and Three.js; the 3D scenes fall back to plain graphics on weak devices or reduced-motion settings.',
-      'Installable as a PWA with an offline page; the service worker never stores photos, results or sign-in data.',
-      'Strict content-security policy, request timeouts with bounded retries, and optional approximate location only after a click.',
-      'Checked with automated browser tests and an accessibility scan.',
-    ],
-    stack: ['React', 'TypeScript', 'Three.js', 'Vite', 'Vercel'],
-    links: [{ label: 'Open the website', href: 'https://nexohypic-web.vercel.app' }],
-  },
-  {
-    slug: 'nexohypic-api',
-    name: 'NexoHypic API',
-    kind: 'Backend',
-    status: 'Live on Render',
-    summary:
-      'The server behind both: authentication, per-user data access enforced in the database, scan history, rate limits that survive restarts, and a public reference library of species and diseases.',
-    facts: [
-      'FastAPI and PostgreSQL with row-level security, so one account can never read another’s records.',
-      'Uploads are re-encoded and stripped of location data; hostile files and inputs are rejected.',
-      'Over 200 automated tests, including security probes for access control and bad input.',
-    ],
-    stack: ['FastAPI', 'PostgreSQL', 'SQLAlchemy', 'Docker', 'Render'],
-    links: [],
-  },
-];
-
 export type Role = {
   period: string;
   title: string;

@@ -124,14 +124,3 @@ test('each website links to its live demo in a new tab', async ({ page }) => {
     await expect(frame).toHaveAttribute('rel', /noopener/);
   }
 });
-
-test('the development section lists the NexoHypic app, website and API with honest status', async ({ page }) => {
-  await page.goto('/');
-  const section = page.locator('#development');
-  await expect(section.getByRole('heading', { name: 'In development' })).toBeVisible();
-  for (const slug of ['nexohypic-app', 'nexohypic-web', 'nexohypic-api']) await expect(section.locator(`#${slug}`)).toBeVisible();
-  const site = section.locator('#nexohypic-web a', { hasText: 'Open the website' });
-  await expect(site).toHaveAttribute('href', 'https://nexohypic-web.vercel.app');
-  await expect(site).toHaveAttribute('rel', /noopener/);
-  await expect(section.locator('#nexohypic-app')).toContainText('Test build');
-});

@@ -4,7 +4,7 @@ import Phone from '../components/Phone.astro';
 import Screen from '../components/Screen.astro';
 import Browser from '../components/Browser.astro';
 import WebScreen from '../components/WebScreen.astro';
-import { profile, projects, sites, development, experience, capabilities } from '../data/site';
+import { profile, projects, sites, experience, capabilities } from '../data/site';
 import { url } from '../lib/url';
 
 type ScreenName = 'home' | 'tidewell' | 'kilo' | 'dose' | 'ledger';
@@ -137,35 +137,6 @@ const words = profile.headline.split(' ');
           </div>
         </article>
       ))}
-    </div>
-  </section>
-
-  <section id="development" class="dev" aria-labelledby="dev-title">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="dev-title" class="section-title">In development</h2>
-        <p class="muted">What I’m building right now: NexoHypic, an AI field guide for Pakistan, as an Android app, a website and a server.</p>
-      </div>
-      <div class="dev-grid">
-        {development.map((b) => (
-          <article id={b.slug} class="dev-card" aria-labelledby={`${b.slug}-title`}>
-            <p class="dev-kind muted">{b.kind} · <span class="dev-status">{b.status}</span></p>
-            <h3 id={`${b.slug}-title`}>{b.name}</h3>
-            <p>{b.summary}</p>
-            <ul class="dev-facts">
-              {b.facts.map((f) => <li>{f}</li>)}
-            </ul>
-            <ul class="dev-stack" role="list" aria-label="Technology">
-              {b.stack.map((t) => <li>{t}</li>)}
-            </ul>
-            {b.links.length > 0 && (
-              <p class="dev-links">
-                {b.links.map((l) => <a class="btn btn-solid small" href={l.href} target="_blank" rel="noopener">{l.label}</a>)}
-              </p>
-            )}
-          </article>
-        ))}
-      </div>
     </div>
   </section>
 
@@ -897,59 +868,5 @@ const words = profile.headline.split(' ');
     .site-text {
       grid-template-columns: minmax(0, 1fr);
     }
-  }
-  .dev {
-    padding-block: clamp(3rem, 6vw, 6rem);
-  }
-  .dev .section-head {
-    margin-bottom: 2rem;
-  }
-  .dev-grid {
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  }
-  .dev-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-m);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-  }
-  .dev-card h3 {
-    font-size: var(--step-2);
-    line-height: 1.15;
-  }
-  .dev-kind {
-    font-size: var(--step--1);
-  }
-  .dev-status {
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .dev-facts {
-    padding-left: 1.1rem;
-    display: grid;
-    gap: 0.4rem;
-    color: var(--muted);
-    font-size: var(--step--1);
-  }
-  .dev-stack {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  .dev-stack li {
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 0.15rem 0.7rem;
-    font-size: var(--step--1);
-  }
-  .dev-links {
-    margin-top: auto;
   }
 </style>
