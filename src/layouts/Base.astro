@@ -52,6 +52,7 @@ const isHome = path === url();
         </a>
         <nav aria-label="Main">
           <a href={isHome ? '#work' : url('#work')}>Work</a>
+          <a href={isHome ? '#development' : url('#development')}>Developing</a>
           <a href={isHome ? '#experience' : url('#experience')}>Experience</a>
           <a href={url('resume')} aria-current={path.startsWith(url('resume')) ? 'page' : undefined}>Résumé</a>
           <a href={isHome ? '#contact' : url('#contact')}>Contact</a>
@@ -202,7 +203,9 @@ const isHome = path === url();
 
   @media (max-width: 640px) {
     nav a[href$='experience'],
-    nav a[href$='#experience'] {
+    nav a[href$='#experience'],
+    nav a[href$='development'],
+    nav a[href$='#development'] {
       display: none;
     }
   }
